@@ -100,20 +100,40 @@ const Name = styled.h4`
   margin-bottom: 0.25rem;
 `;
 
+const Role = styled.span`
+  color: ${({ theme }) => theme.colors.gray[400]};
+  font-size: 0.9rem;
+`;
+
 const Testimonials = () => {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
 
   const testimonials = [
-    t('testimonial1'),
-    t('testimonial2'),
-    t('testimonial3')
+    {
+      text: "The educational toys from BabyBloom have been amazing for my daughter's development. She's learning while having fun, and I can see her progress every day!",
+      author: "Sarah Johnson",
+      role: "Mother of 2",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100&q=80"
+    },
+    {
+      text: "As a father, I appreciate how BabyBloom's toys combine entertainment with education. The quality is excellent, and the customer service is outstanding.",
+      author: "Michael Chen",
+      role: "Parent & Educator",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100&q=80"
+    },
+    {
+      text: "These toys have made learning time the best part of our day. My son's cognitive skills have improved significantly since we started using BabyBloom products.",
+      author: "Emily Rodriguez",
+      role: "Mother & Child Development Specialist",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100&q=80"
+    }
   ];
 
   return (
     <Section>
       <Container>
-        <Title>{t('testimonialTitle')}</Title>
-        <Subtitle>{t('testimonialSubtitle')}</Subtitle>
+        <Title>What Parents Say</Title>
+        <Subtitle>Discover why families love our educational toys and learning materials</Subtitle>
         <Grid>
           {testimonials.map((testimonial, index) => (
             <TestimonialCard key={index}>
@@ -127,10 +147,10 @@ const Testimonials = () => {
               </Stars>
               <Text $isRTL={isRTL}>{testimonial.text}</Text>
               <Author $isRTL={isRTL}>
-                <Avatar src={`/images/avatar-${index + 1}.jpg`} alt={testimonial.author} />
+                <Avatar src={testimonial.avatar} alt={testimonial.author} />
                 <AuthorInfo $isRTL={isRTL}>
                   <Name>{testimonial.author}</Name>
-                  <span>{testimonial.role}</span>
+                  <Role>{testimonial.role}</Role>
                 </AuthorInfo>
               </Author>
             </TestimonialCard>

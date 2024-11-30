@@ -10,6 +10,8 @@ import Categories from './pages/Categories/Categories';
 import ProductGrid from './components/ProductGrid/ProductGrid';
 import Products from './pages/Products';
 import Order from './pages/Order/Order';
+import About from './pages/About/About';
+import Contact from './pages/Contact/Contact';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
             <Route path="/products/:category" element={<ProductGrid />} />
             <Route path="/product/:id" element={<ProductGrid />} />
             <Route path="/order" element={<Order />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
         </div>
       </ThemeProvider>
