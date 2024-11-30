@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { categories } from '../../config/categories';
-import { useLanguage } from '../../contexts/LanguageContext.jsx';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { FaBars, FaTimes } from 'react-icons/fa';
 // Import icons
 import facebookIcon from '../../assets/facebook.svg';
 import instagramIcon from '../../assets/instagram.svg';
@@ -59,12 +60,12 @@ const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${props => props.scrolled ? '0.8rem 2rem' : '1rem 2rem'};
-  background: ${props => props.scrolled 
+  padding: ${props => props.$scrolled ? '0.8rem 2rem' : '1rem 2rem'};
+  background: ${props => props.$scrolled 
     ? 'rgba(255, 255, 255, 0.95)' 
     : 'rgba(255, 255, 255, 0.8)'};
   backdrop-filter: blur(10px);
-  box-shadow: ${props => props.scrolled 
+  box-shadow: ${props => props.$scrolled 
     ? '0 4px 20px rgba(0,0,0,0.1)' 
     : '0 2px 4px rgba(0,0,0,0.05)'};
   position: fixed;
@@ -72,10 +73,14 @@ const Nav = styled.nav`
   left: 0;
   right: 0;
   z-index: 1000;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   animation: ${slideDown} 1.2s cubic-bezier(0.4, 0, 0.2, 1);
   
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: ${props => props.$scrolled ? '0.6rem 1rem' : '0.8rem 1rem'};
+  }
+
   &:before {
     content: '';
     position: absolute;
@@ -90,8 +95,8 @@ const Nav = styled.nav`
       ${({ theme }) => theme.colors.primary}
     );
     background-size: 200% auto;
-    animation: ${shine} ${props => props.scrolled ? '1.5s' : '3s'} linear infinite;
-    opacity: ${props => props.scrolled ? '1' : '0'};
+    animation: ${shine} ${props => props.$scrolled ? '1.5s' : '3s'} linear infinite;
+    opacity: ${props => props.$scrolled ? '1' : '0'};
     transition: opacity 0.6s ease;
   }
 `;
@@ -100,15 +105,19 @@ const Logo = styled(Link)`
   display: flex;
   align-items: center;
   text-decoration: none;
-  font-size: ${props => props.scrolled ? '1.4rem' : '1.5rem'};
+  font-size: ${props => props.$scrolled ? '1.4rem' : '1.5rem'};
   font-weight: bold;
   animation: ${float} 3s ease-in-out infinite;
   transform-origin: center center;
   
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    font-size: ${props => props.$scrolled ? '1.2rem' : '1.3rem'};
+  }
+  
   span {
     background: linear-gradient(
       45deg,
-      ${({ theme, scrolled }) => scrolled 
+      ${({ theme, $scrolled }) => $scrolled 
         ? `${theme.colors.primary}, ${theme.colors.secondary}`
         : `${theme.colors.secondary}, ${theme.colors.primary}`}
     );
@@ -123,19 +132,18 @@ const Logo = styled(Link)`
   }
 `;
 
-const NavLinks = styled.div`
-  display: flex;
-  gap: ${props => props.scrolled ? '1.8rem' : '2rem'};
-  align-items: center;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    display: none;
-  }
-`;
-
 const NavItem = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const NavLink = styled(Link)`
@@ -146,6 +154,7 @@ const NavLink = styled(Link)`
   border-radius: ${({ theme }) => theme.borderRadius.full};
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  text-align: center;
 
   &:after {
     content: '';
@@ -172,165 +181,215 @@ const NavLink = styled(Link)`
 const Dropdown = styled.div`
   position: absolute;
   top: 100%;
-  ${props => props.isRTL ? 'right' : 'left'}: 0;
+  left: 0;
   background: white;
-  border-radius: ${({ theme }) => theme.borderRadius.medium};
-  box-shadow: ${({ theme }) => theme.shadows.large};
-  padding: 0.5rem;
+  border-radius: 12px;
+  padding: 1rem 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   min-width: 200px;
-  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
-  transform: translateY(${({ isOpen }) => (isOpen ? '10px' : '0')});
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
   transition: all 0.3s ease;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  z-index: 100;
+  margin-top: 0.5rem;
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    position: static;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
 `;
 
 const DropdownItem = styled(Link)`
   display: block;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
   color: ${({ theme }) => theme.colors.text};
   text-decoration: none;
-  border-radius: ${({ theme }) => theme.borderRadius.small};
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-align: left;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.primary}15;
+    background: ${({ theme }) => `${theme.colors.primary}10`};
     color: ${({ theme }) => theme.colors.primary};
+    transform: translateX(5px);
   }
 `;
 
-const NavSocial = styled.div`
+const NavLinks = styled.div`
+  display: flex;
+  gap: ${props => props.$scrolled ? '1.8rem' : '2rem'};
+  align-items: center;
+  justify-content: center;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 1;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    position: fixed;
+    top: 0;
+    ${props => props.$isRTL ? 'right' : 'left'}: 0;
+    height: 100vh;
+    width: 80%;
+    max-width: 400px;
+    flex-direction: column;
+    background: white;
+    padding: 2rem;
+    gap: 1.5rem;
+    transform: translateX(${props => props.$isOpen ? '0' : props.$isRTL ? '100%' : '-100%'});
+    box-shadow: ${props => props.$isOpen ? '0 0 50px rgba(0,0,0,0.1)' : 'none'};
+    z-index: 1000;
+    overflow-y: auto;
+    justify-content: flex-start;
+  }
+`;
+
+const MobileOverlay = styled.div`
+  display: none;
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: ${props => props.$isOpen ? 1 : 0};
+    visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+    transition: all 0.3s ease;
+    z-index: 999;
+  }
+`;
+
+const MenuButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+const Actions = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-const SocialLink = styled.a`
-  img {
-    width: 24px;
-    height: 24px;
-    transition: transform 0.3s ease;
-  }
-
-  &:hover img {
-    transform: scale(1.1);
-  }
-`;
-
-const CartIcon = styled.div`
-  position: relative;
-  cursor: pointer;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
-`;
-
-const CartCount = styled.span`
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 600;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const LanguageButton = styled.button`
-  background: ${({ theme }) => theme.colors.primary};
-  color: white;
+const IconButton = styled.button`
+  background: none;
   border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+`;
+
+const LanguageToggle = styled.button`
+  background: none;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.primary};
   padding: 0.5rem 1rem;
   border-radius: ${({ theme }) => theme.borderRadius.full};
-  cursor: pointer;
   font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
-
+  
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    background: ${({ theme }) => theme.colors.primary};
+    color: white;
   }
 `;
 
-const CashOnDelivery = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: 500;
-  font-size: 0.9rem;
-  margin-right: 1rem;
+const MobileMenuButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+  
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 const Navbar = () => {
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const { language, toggleLanguage, t, isRTL } = useLanguage();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { t, isRTL } = useLanguage();
 
   useEffect(() => {
-    const controlNavbar = () => {
-      const currentScrollY = window.scrollY;
-      setScrolled(currentScrollY > 20);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', controlNavbar);
-    return () => window.removeEventListener('scroll', controlNavbar);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <Nav isRTL={isRTL} scrolled={scrolled}>
-      <Logo scrolled={scrolled}>
-        <span>🎯 BabyBloom</span>
+    <Nav $scrolled={isScrolled} $isRTL={isRTL}>
+      <Logo to="/" $scrolled={isScrolled}>
+        <span>BabyBloom</span>
       </Logo>
 
-      <NavLinks scrolled={scrolled}>
+      <NavLinks $scrolled={isScrolled} $isOpen={isOpen} $isRTL={isRTL}>
         <NavItem>
-          <NavLink to="/" className="active">{t('home')}</NavLink>
+          <NavLink to="/">{t('home')}</NavLink>
         </NavItem>
         
-        <NavItem 
-          onMouseEnter={() => setIsCategoryOpen(true)}
-          onMouseLeave={() => setIsCategoryOpen(false)}
-        >
+        <NavItem>
           <NavLink to="/categories">{t('categories')}</NavLink>
-          <Dropdown isOpen={isCategoryOpen} isRTL={isRTL}>
-            {categories.map((category) => (
+          <Dropdown className="dropdown">
+            {categories.map(category => (
               <DropdownItem key={category.id} to={category.link}>
-                {t(`categoryTitles.${category.id}`)}
+                {category.title}
               </DropdownItem>
             ))}
           </Dropdown>
         </NavItem>
-
+        
         <NavItem>
-          <NavLink to="/featured">{t('featured')}</NavLink>
+          <NavLink to="/products">{t('products')}</NavLink>
         </NavItem>
         
         <NavItem>
-          <NavLink to="/sale">{t('sale')}</NavLink>
+          <NavLink to="/about">{t('about')}</NavLink>
+        </NavItem>
+        
+        <NavItem>
+          <NavLink to="/contact">{t('contact')}</NavLink>
         </NavItem>
       </NavLinks>
 
-      <NavSocial>
-        <CashOnDelivery>{t('cashOnDelivery')}</CashOnDelivery>
-        <LanguageButton onClick={toggleLanguage}>
-          {language === 'en' ? 'عربي' : 'English'}
-        </LanguageButton>
-        <SocialLink href="https://facebook.com/babybloom" target="_blank">
-          <img src={facebookIcon} alt="Facebook" />
-        </SocialLink>
-        <SocialLink href="https://instagram.com/babybloom" target="_blank">
-          <img src={instagramIcon} alt="Instagram" />
-        </SocialLink>
-        <CartIcon>
-          <img src={cartIcon} alt={t('cart')} />
-          <CartCount>0</CartCount>
-        </CartIcon>
-      </NavSocial>
+      <Actions>
+        <IconButton>
+          <img src={cartIcon} alt="Cart" />
+        </IconButton>
+        <LanguageToggle onClick={() => console.log('Toggle language')}>
+          {isRTL ? 'EN' : 'عربي'}
+        </LanguageToggle>
+        <MobileMenuButton onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? <FaTimes /> : <FaBars />}
+        </MobileMenuButton>
+      </Actions>
+
+      {isOpen && <MobileOverlay onClick={() => setIsOpen(false)} />}
     </Nav>
   );
 };

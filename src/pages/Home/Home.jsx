@@ -11,14 +11,14 @@ import Newsletter from '../../components/Newsletter/Newsletter';
 import Footer from '../../components/Footer/Footer';
 
 const HomeContainer = styled.div`
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 const Home = () => {
   const { isRTL } = useLanguage();
 
   return (
-    <HomeContainer isRTL={isRTL}>
+    <HomeContainer $isRTL={isRTL}>
       <main>
         <Hero />
         <Features />

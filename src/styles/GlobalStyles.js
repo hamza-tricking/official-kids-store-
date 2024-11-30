@@ -1,10 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700&display=swap');
-
   * {
     margin: 0;
     padding: 0;
@@ -16,6 +12,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
+    font-family: 'Quicksand', 'Poppins', 'Cairo', 'Noto Kufi Arabic', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: ${({ theme }) => theme.colors.text};
@@ -27,6 +24,7 @@ const GlobalStyles = createGlobalStyle`
     cursor: pointer;
     border: none;
     background: none;
+    font-family: inherit;
   }
 
   input, textarea {
@@ -50,41 +48,26 @@ const GlobalStyles = createGlobalStyle`
   }
 
   /* RTL Support */
-  html[dir="rtl"] {
-    body, button, input, textarea, h1, h2, h3, h4, h5, h6, p, span, a {
-      font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif;
-      letter-spacing: 0;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: 600;
-    }
-
-    p, span, a {
-      font-weight: 400;
-    }
-
-    .app {
-      direction: rtl;
-    }
+  [dir="rtl"] {
+    font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif;
   }
 
-  html[dir="ltr"] {
-    body, button, input, textarea, h1, h2, h3, h4, h5, h6, p, span, a {
-      font-family: 'Poppins', sans-serif;
-    }
+  /* Scrollbar Styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: 600;
-    }
+  ::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.colors.gray[100]};
+  }
 
-    p, span, a {
-      font-weight: 400;
-    }
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.primary};
+    border-radius: 4px;
+  }
 
-    .app {
-      direction: ltr;
-    }
+  ::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.colors.secondary};
   }
 `;
 

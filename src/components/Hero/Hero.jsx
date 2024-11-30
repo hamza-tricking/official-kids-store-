@@ -58,10 +58,15 @@ const shimmer = keyframes`
 `;
 
 const HeroSection = styled.section`
-  min-height: 100vh;
+  position: relative;
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 4rem 2rem;
+  overflow: hidden;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   background: linear-gradient(
     -45deg,
     ${({ theme }) => theme.colors.primary},
@@ -71,10 +76,6 @@ const HeroSection = styled.section`
   );
   background-size: 400% 400%;
   animation: ${gradientAnimation} 15s ease infinite;
-  padding: 2rem;
-  position: relative;
-  overflow: hidden;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   perspective: 1000px;
   transform-style: preserve-3d;
 `;
@@ -92,8 +93,8 @@ const HeroContent = styled.div`
 `;
 
 const HeroTitle = styled.h1`
-  font-size: 3.5rem;
-  margin-bottom: 1.5rem;
+  font-size: 3rem;
+  margin-bottom: 1.2rem;
   line-height: 1.2;
   opacity: 0;
   animation: ${fadeInUp} 0.8s ease forwards;
@@ -122,7 +123,7 @@ const HeroTitle = styled.h1`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 `;
 
@@ -150,56 +151,69 @@ const HeroCTA = styled.div`
   }
 `;
 
-const CTAButton = styled(Link)`
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
+const PrimaryButton = styled(Link)`
+  padding: 1rem 2rem;
   border-radius: 50px;
+  font-weight: 600;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  transform-style: preserve-3d;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  background: linear-gradient(45deg, 
+    ${({ theme }) => theme.colors.primary}, 
+    ${({ theme }) => theme.colors.secondary}
+  );
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 
   &::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    animation: ${shimmer} 2s infinite;
   }
 
-  &:hover::before {
-    width: 300px;
-    height: 300px;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   }
 
-  ${({ primary, theme }) => primary ? `
-    background: white;
-    color: ${theme.colors.primary};
+  &:active {
+    transform: translateY(-1px);
+  }
+`;
 
-    &:hover {
-      transform: translateY(-3px) translateZ(20px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-  ` : `
-    background: transparent;
-    color: white;
-    border: 2px solid white;
+const SecondaryButton = styled(Link)`
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-3px) translateZ(20px);
-    }
-  `}
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
 `;
 
 const Card3D = styled.div`
@@ -380,7 +394,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <HeroSection isRTL={isRTL}>
+    <HeroSection $isRTL={isRTL}>
       <ParallaxWrapper ref={parallaxRef}>
         <Card3D className="card-3d">
           <CardInner>
@@ -416,18 +430,12 @@ const Hero = () => {
       
       <HeroContent>
         <HeroTitle>
-          {t('heroTitle')} <span className="magic-text">{t('heroTitleHighlight')}</span>
+          <span className="magic-text">{t('Babybloom')}</span> {t('heroTitle')}
         </HeroTitle>
-        <HeroSubtitle>
-          {t('heroDescription')}
-        </HeroSubtitle>
+        <HeroSubtitle>{t('heroSubtitle')}</HeroSubtitle>
         <HeroCTA>
-          <CTAButton to="/categories" primary>
-            {t('categories')}
-          </CTAButton>
-          <CTAButton to="/products">
-            {t('products')}
-          </CTAButton>
+          <PrimaryButton to="/products">{t('shopNow')}</PrimaryButton>
+          <SecondaryButton to="/categories">{t('exploreMore')}</SecondaryButton>
         </HeroCTA>
       </HeroContent>
     </HeroSection>

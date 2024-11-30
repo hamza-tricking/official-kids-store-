@@ -40,7 +40,7 @@ const ProductImage = styled.img`
 const BadgeContainer = styled.div`
   position: absolute;
   top: 1rem;
-  ${({ isRTL }) => isRTL ? 'right: 1rem' : 'left: 1rem'};
+  ${({ $isRTL }) => $isRTL ? 'right: 1rem' : 'left: 1rem'};
   display: flex;
   gap: 0.5rem;
 `;
@@ -59,7 +59,7 @@ const Badge = styled.span`
 
 const Content = styled.div`
   padding: 1.5rem;
-  text-align: ${({ isRTL }) => isRTL ? 'right' : 'left'};
+  text-align: ${({ $isRTL }) => $isRTL ? 'right' : 'left'};
 `;
 
 const Title = styled(Link)`
@@ -80,7 +80,7 @@ const Price = styled.div`
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  justify-content: ${({ isRTL }) => isRTL ? 'flex-end' : 'flex-start'};
+  justify-content: ${({ $isRTL }) => $isRTL ? 'flex-end' : 'flex-start'};
 `;
 
 const CurrentPrice = styled.span`
@@ -100,7 +100,7 @@ const Rating = styled.div`
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  justify-content: ${({ isRTL }) => isRTL ? 'flex-end' : 'flex-start'};
+  justify-content: ${({ $isRTL }) => $isRTL ? 'flex-end' : 'flex-start'};
 `;
 
 const Stars = styled.span`
@@ -198,41 +198,29 @@ const ProductCard = ({ product }) => {
     <Card>
       <ImageContainer>
         <ProductImage src={image} alt={name} />
-        <BadgeContainer isRTL={isRTL}>
-          {badges.map((badge, index) => (
-            <Badge key={index} type={badge.toLowerCase()}>
-              {badge}
+        <BadgeContainer $isRTL={isRTL}>
+          {badges.map(badge => (
+            <Badge key={badge} type={badge}>
+              {t(`badge${badge.charAt(0).toUpperCase() + badge.slice(1)}`)}
             </Badge>
           ))}
         </BadgeContainer>
       </ImageContainer>
-
-      <Content isRTL={isRTL}>
+      <Content $isRTL={isRTL}>
         <Title to={`/product/${id}`}>{name}</Title>
-        <Price isRTL={isRTL}>
+        <Price $isRTL={isRTL}>
           <CurrentPrice>${price}</CurrentPrice>
           {originalPrice && (
             <OriginalPrice>${originalPrice}</OriginalPrice>
           )}
         </Price>
-
-        <Rating isRTL={isRTL}>
-          <Stars>
-            {'★'.repeat(Math.floor(rating))}
-            {'☆'.repeat(5 - Math.floor(rating))}
-          </Stars>
-          <ReviewCount>
-            ({reviewCount} {t('common.reviews')})
-          </ReviewCount>
+        <Rating $isRTL={isRTL}>
+          <Stars>{'★'.repeat(Math.floor(rating))}{'☆'.repeat(5 - Math.floor(rating))}</Stars>
+          <ReviewCount>({reviewCount} {t('reviews')})</ReviewCount>
         </Rating>
-
         <ButtonContainer>
-          <BuyNowButton onClick={handleBuyNow}>
-            {t('buyNow')}
-          </BuyNowButton>
-          <AddToCartButton onClick={handleAddToCart}>
-            {t('addToCart')}
-          </AddToCartButton>
+          <BuyNowButton onClick={handleBuyNow}>{t('buyNow')}</BuyNowButton>
+          <AddToCartButton onClick={handleAddToCart}>{t('addToCart')}</AddToCartButton>
         </ButtonContainer>
       </Content>
     </Card>

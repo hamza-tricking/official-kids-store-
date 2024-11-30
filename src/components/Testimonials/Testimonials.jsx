@@ -51,7 +51,7 @@ const TestimonialCard = styled.div`
 const QuoteIcon = styled.div`
   position: absolute;
   top: -15px;
-  ${({ isRTL }) => isRTL ? 'right: 20px;' : 'left: 20px;'}
+  ${({ $isRTL }) => $isRTL ? 'right: 20px;' : 'left: 20px;'}
   width: 40px;
   height: 40px;
   background: ${({ theme }) => theme.colors.primary};
@@ -74,12 +74,14 @@ const Text = styled.p`
   line-height: 1.6;
   margin-bottom: 1.5rem;
   font-style: italic;
+  text-align: ${({ $isRTL }) => $isRTL ? 'right' : 'left'};
 `;
 
 const Author = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-direction: ${({ $isRTL }) => $isRTL ? 'row-reverse' : 'row'};
 `;
 
 const Avatar = styled.img`
@@ -89,69 +91,46 @@ const Avatar = styled.img`
   object-fit: cover;
 `;
 
-const AuthorInfo = styled.div``;
+const AuthorInfo = styled.div`
+  text-align: ${({ $isRTL }) => $isRTL ? 'right' : 'left'};
+`;
 
 const Name = styled.h4`
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: 0.25rem;
 `;
 
-const Role = styled.p`
-  color: ${({ theme }) => theme.colors.gray[400]};
-  font-size: 0.9rem;
-`;
-
 const Testimonials = () => {
   const { t, isRTL } = useLanguage();
 
   const testimonials = [
-    {
-      text: t('testimonial1Text'),
-      author: t('testimonial1Author'),
-      role: t('testimonial1Role'),
-      avatar: "game (1).jpg",
-      rating: 5
-    },
-    {
-      text: t('testimonial2Text'),
-      author: t('testimonial2Author'),
-      role: t('testimonial2Role'),
-      avatar: "game (2).jpg",
-      rating: 5
-    },
-    {
-      text: t('testimonial3Text'),
-      author: t('testimonial3Author'),
-      role: t('testimonial3Role'),
-      avatar: "game (3).jpg",
-      rating: 5
-    }
+    t('testimonial1'),
+    t('testimonial2'),
+    t('testimonial3')
   ];
 
   return (
     <Section>
       <Container>
-        <Title>{t('testimonialsTitle')}</Title>
-        <Subtitle>
-          {t('testimonialsSubtitle')}
-        </Subtitle>
+        <Title>{t('testimonialTitle')}</Title>
+        <Subtitle>{t('testimonialSubtitle')}</Subtitle>
         <Grid>
           {testimonials.map((testimonial, index) => (
             <TestimonialCard key={index}>
-              <QuoteIcon isRTL={isRTL}>
+              <QuoteIcon $isRTL={isRTL}>
                 <FaQuoteLeft />
               </QuoteIcon>
               <Stars>
-                {[...Array(testimonial.rating)].map((_, i) => (
+                {[...Array(5)].map((_, i) => (
                   <FaStar key={i} />
                 ))}
               </Stars>
-              <Text>{testimonial.text}</Text>
-              <Author>
-                <Avatar src={`/src/assets/${testimonial.avatar}`} alt={testimonial.author} />
-                <AuthorInfo>
+              <Text $isRTL={isRTL}>{testimonial.text}</Text>
+              <Author $isRTL={isRTL}>
+                <Avatar src={`/images/avatar-${index + 1}.jpg`} alt={testimonial.author} />
+                <AuthorInfo $isRTL={isRTL}>
                   <Name>{testimonial.author}</Name>
-                  <Role>{testimonial.role}</Role>
+                  <span>{testimonial.role}</span>
                 </AuthorInfo>
               </Author>
             </TestimonialCard>

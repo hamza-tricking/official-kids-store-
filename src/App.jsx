@@ -1,13 +1,15 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { LanguageProvider } from './contexts/LanguageContext.jsx';
-import GlobalStyles from './styles/GlobalStyles';
 import theme from './styles/theme';
+import { LanguageProvider } from './contexts/LanguageContext';
+import GlobalStyles from './styles/GlobalStyles';
 import Navbar from './components/Navbar/Navbar';
 import Home from './pages/Home/Home';
-import ProductDetails from './pages/ProductDetails/ProductDetails';
-import ProductLanding from './components/ProductLanding/ProductLanding';
+import Categories from './pages/Categories/Categories';
+import ProductGrid from './components/ProductGrid/ProductGrid';
+import Products from './pages/Products';
+import Order from './pages/Order/Order';
 
 function App() {
   return (
@@ -18,8 +20,11 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/order" element={<ProductLanding />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/products/:category" element={<ProductGrid />} />
+            <Route path="/product/:id" element={<ProductGrid />} />
+            <Route path="/order" element={<Order />} />
           </Routes>
         </div>
       </ThemeProvider>

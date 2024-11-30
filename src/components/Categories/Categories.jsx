@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { categories } from '../../config/categories';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { motion } from 'framer-motion';
 
 const Section = styled.section`
   padding: 6rem 2rem;
   background: #ffffff;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 const Container = styled.div`
@@ -31,26 +32,25 @@ const Subtitle = styled.p`
   color: ${({ theme }) => theme.colors.gray[400]};
   max-width: 600px;
   margin: 0 auto 3rem;
+  line-height: 1.6;
 `;
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
+  padding: 1rem;
 `;
 
-const CategoryCard = styled(Link)`
+const CategoryCard = styled(motion(Link))`
   position: relative;
   height: 300px;
   border-radius: 20px;
   overflow: hidden;
   text-decoration: none;
   box-shadow: ${({ theme }) => theme.shadows.medium};
-  transition: transform 0.3s ease;
   
   &:hover {
-    transform: translateY(-10px);
-    
     img {
       transform: scale(1.1);
     }
@@ -65,7 +65,7 @@ const CategoryImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
 `;
 
 const CategoryTitle = styled.h3`
@@ -85,24 +85,38 @@ const CategoryTitle = styled.h3`
 const Categories = () => {
   const { t, isRTL } = useLanguage();
 
+  const categoryTranslations = {
+    'educational': 'categoryEducational',
+    'blocks': 'categoryCreative',
+    'arts': 'categoryCreative',
+    'science': 'categoryScience',
+    'music': 'categoryMusic',
+    'outdoor': 'categoryOutdoor'
+  };
+
   return (
-    <Section id="categories" isRTL={isRTL}>
+    <Section $isRTL={isRTL}>
       <Container>
         <Title>
-          {isRTL ? (
-            <>{t('exploreCategories').split(' ').reverse().join(' ')}</>
-          ) : (
-            <>{t('exploreCategories')}</>
-          )}
+          {t('exploreCategories')}
         </Title>
         <Subtitle>
           {t('categoriesSubtitle')}
         </Subtitle>
         <Grid>
-          {categories.map((category) => (
-            <CategoryCard key={category.id} to={category.link}>
-              <CategoryImage src={category.image} alt={t(`categoryTitles.${category.id}`)} />
-              <CategoryTitle>{t(`categoryTitles.${category.id}`)}</CategoryTitle>
+          {categories.map((category, index) => (
+            <CategoryCard
+              key={category.id}
+              to={category.link}
+              whileHover={{ y: -10 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <CategoryImage src={category.image} alt={t(categoryTranslations[category.link.split('/')[2]])} />
+              <CategoryTitle>
+                {t(categoryTranslations[category.link.split('/')[2]])}
+              </CategoryTitle>
             </CategoryCard>
           ))}
         </Grid>
